@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 use std::cell::UnsafeCell;
 use std::ops::{Deref, DerefMut};
 use std::fmt::{Formatter, Debug, Error, Pointer};
@@ -6,9 +6,9 @@ use std::cmp::Ordering;
 
 /// A smart container for objects in recursive data structures
 ///
-/// This container contains Rc and therefore `clone()` will create a new reference to the same instance.
+/// This container contains Arc and therefore `clone()` will create a new reference to the same instance.
 #[derive(Default)]
-pub struct SCell<T: ?Sized>(Rc<UnsafeCell<T>>);
+pub struct SCell<T: ?Sized>(Arc<UnsafeCell<T>>);
 
 /// A reference wrapper that lets rust make the same guarantees regardless of internal type
 pub struct Ref<'a, T: 'a + ?Sized>(&'a T);
@@ -19,7 +19,7 @@ pub struct RefMut<'a, T: 'a + ?Sized>(&'a mut T);
 impl<T> SCell<T> {
     #[inline]
     pub fn new(t: T) -> Self {
-        SCell(Rc::new(UnsafeCell::new(t)))
+        SCell(Arc::new(UnsafeCell::new(t)))
     }
 }
 
